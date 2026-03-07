@@ -31,14 +31,18 @@ YOLO_CONF = float(os.getenv("YOLO_CONF", "0.25"))
 CAMERA_INDEX = int(os.getenv("CAMERA_INDEX", "0"))
 WARNING_COOLDOWN_S = float(os.getenv("WARNING_COOLDOWN_S", "1.0"))
 
-# Telegram placeholders (fill via env vars)
-TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "PUT_BOT_TOKEN_HERE")
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "PUT_CHAT_ID_HERE")
+# Telegram ayarları
+# Tercihen ortam değişkeni kullan:
+#   TELEGRAM_BOT_TOKEN="123:ABC..."  TELEGRAM_CHAT_ID="123456789"
+# Dilersen doğrudan buraya da yazabilirsin.
+TELEGRAM_BOT_TOKEN = "8311475704:AAGE38ChxWzkpyuTG03qXSBUbw6cCA9HnpQ"
+TELEGRAM_CHAT_ID = "7239676972"
 
 model = YOLO(YOLO_MODEL_PATH)
 
 _cap = None
 _last_person_warning_ts = 0.0
+_last_person_count = 0
 _infer_lock = threading.Lock()
 
 _events: Deque[Dict[str, Any]] = deque(maxlen=int(os.getenv("EVENT_HISTORY_MAX", "200")))
@@ -114,27 +118,40 @@ def _publish_event(event_type: str, payload: Dict[str, Any]) -> Dict[str, Any]:
 
 def _telegram_configured() -> bool:
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        print("Telegram: TOKEN veya CHAT_ID ayarlı değil, mesaj gönderilmeyecek.", flush=True)
         return False
     if TELEGRAM_BOT_TOKEN.startswith("PUT_") or TELEGRAM_CHAT_ID.startswith("PUT_"):
+        print("Telegram: placeholder değerler kullanılıyor, mesaj gönderilmeyecek.", flush=True)
         return False
     return True
 
 
-def send_telegram_message(text: str) -> None:
+def send_telegram_notification(text: str) -> None:
+    """Telegram'a bildirim gönder ve sonucu terminale logla."""
     if not _telegram_configured():
         return
 
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    payload = {"chat_id": TELEGRAM_CHAT_ID, "text": text}
+
     try:
-        requests.post(url, json={"chat_id": TELEGRAM_CHAT_ID, "text": text}, timeout=6)
-    except Exception:
-        return
+        resp = requests.post(url, json=payload, timeout=10)
+        ok = False
+        try:
+            data = resp.json()
+            ok = bool(data.get("ok"))
+        except Exception:
+            ok = resp.ok
 
-
-def _send_telegram_async(text: str) -> None:
-    if not _telegram_configured():
-        return
-    threading.Thread(target=send_telegram_message, args=(text,), daemon=True).start()
+        if ok:
+            print("Mesaj gönderildi", flush=True)
+        else:
+            print(
+                f"Telegram hata: status={resp.status_code} body={resp.text[:200]}",
+                flush=True,
+            )
+    except Exception as e:
+        print(f"Telegram exception: {e}", flush=True)
 
 
 def _annotate(frame: Any, result: Any) -> Tuple[Any, bool, int]:
@@ -180,7 +197,7 @@ def _annotate(frame: Any, result: Any) -> Tuple[Any, bool, int]:
 
 
 def gen_frames():
-    global _last_person_warning_ts
+    global _last_person_warning_ts, _last_person_count
 
     while True:
         cap = _get_camera()
@@ -209,14 +226,21 @@ def gen_frames():
             else:
                 person_detected = False
                 person_count = 0
+        # Sayı değiştiyse hem Telegram'a hem de Web Arayüzüne (Event) haber ver
+        if person_count != _last_person_count:
+            if person_count > 0:
+                msg = f"🚨 DİKKAT: {person_count} kişi tespit edildi!"
+                # Web arayüzündeki 'Tespit Geçmişi' için event yayınla
+                _publish_event("person", {"message": msg, "count": person_count})
+            else:
+                msg = "✅ Alan Temiz: Kimse kalmadı."
+                _publish_event("clear", {"message": msg, "count": 0})
+            
+            # Telegram bildirimini gönder
+            send_telegram_notification(msg)
+            _last_person_count = person_count
 
-        now = time.time()
-        if person_detected and (now - _last_person_warning_ts) >= WARNING_COOLDOWN_S:
-            print("UYARI: Insan tespit edildi!", flush=True)
-            msg = f"UYARI: Insan tespit edildi! (adet: {person_count})"
-            _publish_event("person", {"message": msg, "count": person_count})
-            _send_telegram_async(msg)
-            _last_person_warning_ts = now
+        
 
         ok, buf = cv2.imencode(".jpg", frame)
         if not ok:
@@ -292,5 +316,11 @@ def events():
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000, debug=False, threaded=True)
+    # SİSTEM AÇILIŞ BİLDİRİMİ
+    send_telegram_notification("🚀 Watcher_AI Sistemi Başlatıldı. Kamera aktif!")
+    try:
+        app.run(host="127.0.0.1", port=5000, debug=False, threaded=True)
+    finally:
+        # SİSTEM KAPANIŞ BİLDİRİMİ
+        send_telegram_notification("⚠️ Watcher_AI Sistemi Kapatıldı.")
 
