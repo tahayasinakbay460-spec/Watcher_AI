@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <title>Watcher AI | Admin Giriş</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body style="display:flex; align-items:center; justify-content:center;">
+    <div class="panel" style="width: 350px;">
+        <h2 style="text-align:center;">ADMİN GİRİŞİ</h2>
+        <form action="{{ url_for('login') }}" method="post" style="display:grid; gap:10px;">
+            <input type="text" name="username" placeholder="Kullanıcı Adı" class="btn" style="text-align:left;" required>
+            <input type="password" name="password" placeholder="Şifre" class="btn" style="text-align:left;" required>
+            <button type="submit" class="btn" style="background:var(--cyan); color:black;">SİSTEME GİR</button>
+        </form>
+    </div>
+</body>
+</html>

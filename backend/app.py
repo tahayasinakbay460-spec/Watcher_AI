@@ -3,6 +3,7 @@ import json
 import os
 import threading
 import time
+import shutil
 from collections import deque
 from datetime import datetime, timezone
 from typing import Any, Deque, Dict, Tuple
@@ -10,7 +11,7 @@ from typing import Any, Deque, Dict, Tuple
 import cv2
 import numpy as np
 import requests
-from flask import Flask, Response, render_template, request
+from flask import Flask, Response, render_template, request, send_from_directory, session, redirect, url_for
 
 try:
     from ultralytics import YOLO
@@ -19,12 +20,16 @@ except Exception as e:  # pragma: no cover
         "Ultralytics YOLO bulunamadı. Kurulum için: pip install ultralytics"
     ) from e
 
-
+if not os.path.exists("captures"):
+    os.makedirs("captures")
 app = Flask(
     __name__,
     template_folder="../frontend/templates",
     static_folder="../frontend/static",
 )
+app.secret_key = "watcher_ai_ozel_anahtar" # Session güvenliği için şart
+ADMIN_USER = "admin"
+ADMIN_PASS = "1234" # Burayı dilediğin gibi değiştir kral
 
 YOLO_MODEL_PATH = os.getenv("YOLO_MODEL", "yolov8n.pt")
 YOLO_CONF = float(os.getenv("YOLO_CONF", "0.50"))
@@ -78,6 +83,91 @@ def toggle_camera():
     send_telegram_notification(f"Sistem Komutu: Kamera Uzaktan {durum}")
     
     return {"status": camera_active}
+
+# --- ADMİN KİMLİK DOĞRULAMA ---
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        if request.form.get('username') == ADMIN_USER and request.form.get('password') == ADMIN_PASS:
+            session['admin_logged_in'] = True
+            return redirect(url_for('admin_panel'))
+        return "Hatalı kullanıcı adı veya şifre!", 401
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('admin_logged_in', None)
+    return redirect(url_for('login'))
+
+@app.route('/admin')
+def admin_panel():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('login'))
+    return render_template('admin.html')
+
+# --- TOPLU SİLME (YENİ ÖZELLİK) ---
+@app.route('/admin/delete_all', methods=['POST'])
+def delete_all_captures():
+    global _event_seq, _events
+    if not session.get('admin_logged_in'):
+        return {"status": "error", "message": "Yetkisiz erişim"}, 403
+    try:
+        # 1. Fotoğrafları Fiziksel Sil
+        if os.path.exists("captures"):
+            for f in os.listdir("captures"):
+                if f.endswith(".jpg"):
+                    os.remove(os.path.join("captures", f))
+        
+        # 2. Logları ve Sayacı Sıfırla
+        with _events_cond:
+            _events.clear() # Deque objesini boşalt
+            _event_seq = 0  # Sayacı başa sar
+            
+            # Tarayıcıya "Sıfırlandım" sinyali gönderelim
+            _publish_event("clear", {"message": "Sistem Veritabanı Sıfırlandı", "count": 0})
+        
+        # 3. JSON Dosyasını Tamamen Boşalt (veya boş liste yaz)
+        with open('detections.json', 'w', encoding='utf-8') as f:
+            f.write("") # Dosyayı tamamen sıfırla
+            
+        return {"status": "success", "message": "Tüm veriler temizlendi."}
+    except Exception as e:
+        print(f"Silme Hatası: {e}")
+        return {"status": "error", "message": str(e)}, 500
+
+@app.route('/admin/captures')
+def list_captures():
+    if not session.get('admin_logged_in'): 
+        return {"status": "error", "message": "Yetkisiz erişim"}, 403
+    """Klasördeki fotoğrafları en yeni en üstte olacak şekilde listeler."""
+    if not os.path.exists("captures"):
+        return {"captures": []}
+    files = os.listdir("captures")
+    # Dosyaları tarihe göre sırala
+    files.sort(key=lambda x: os.path.getmtime(os.path.join("captures", x)), reverse=True)
+    captures = [{"name": f, "url": f"/captures/{f}"} for f in files if f.endswith('.jpg')]
+    return {"captures": captures}
+
+@app.route('/admin/delete_capture/<filename>', methods=['POST'])
+def delete_capture(filename):
+    if not session.get('admin_logged_in'):
+        return {"status": "error", "message": "Yetkisiz erişim"}, 403
+    """Belirtilen kanıt dosyasını sunucudan siler."""
+    try:
+        file_path = os.path.join("captures", filename)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            return {"status": "success"}
+        return {"status": "error", "message": "Dosya bulunamadı"}, 404
+    except Exception as e:
+        return {"status": "error", "message": str(e)}, 500
+
+@app.route('/captures/<path:filename>')
+def custom_static(filename):
+    if not session.get('admin_logged_in'):
+        return {"status": "error", "message": "Yetkisiz erişim"}, 403
+    """Tarayıcının captures klasöründeki resimleri okumasını sağlar."""
+    return send_from_directory(os.path.abspath("captures"), filename)
 @atexit.register
 def _cleanup_camera() -> None:
     global _cap
@@ -245,9 +335,22 @@ def gen_frames():
 
         # 3. SAYI DEĞİŞİMİ VE JSON KAYDI (Döngü içinde ama Lock dışında)
         if person_count != _last_person_count:
-            event_type = "person" if person_count > 0 else "clear"
-            msg = f"🚨 Tespit: {person_count} kişi (ID: {track_ids})" if person_count > 0 else "✅ Temiz"
-            
+            if person_count > 0:
+                event_type = "person"
+                msg = f"🚨 Tespit: {person_count} kişi (ID: {track_ids})"
+                
+                # --- KANIT TOPLAMA (SNAPSHOT) ---
+                # Dosya adını benzersiz yapmak için zaman damgası kullanıyoruz
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                image_path = f"captures/snapshot_{timestamp}.jpg"
+                
+                # O anki frame'i (kareyi) dosyaya yaz
+                cv2.imwrite(image_path, frame)
+                print(f"📸 Kanıt kaydedildi: {image_path}", flush=True)
+                # --------------------------------
+            else:
+                msg = "✅ Alan Temiz"
+                event_type = "clear"
             log_data = {
                 "ts": _now_iso(),
                 "event": event_type,
@@ -331,10 +434,16 @@ def events():
 
 if __name__ == "__main__":
     # SİSTEM AÇILIŞ BİLDİRİMİ
-    send_telegram_notification("🚀 Watcher_AI Sistemi Başlatıldı. Kamera aktif!")
+    send_telegram_notification("🚀 Watcher_AI Sistemi Arka Planda Başlatıldı!")
+    
+    # Kamerayı ve YOLO'yu ayrı bir işçi (Thread) olarak başlatıyoruz
+    # Bu sayede sen admin panelindeyken de sistem çalışmaya devam eder
+    t = threading.Thread(target=lambda: deque(gen_frames(), maxlen=0))
+    t.daemon = True
+    t.start()
+    
     try:
         app.run(host="127.0.0.1", port=5000, debug=False, threaded=True)
     finally:
-        # SİSTEM KAPANIŞ BİLDİRİMİ
         send_telegram_notification("⚠️ Watcher_AI Sistemi Kapatıldı.")
 

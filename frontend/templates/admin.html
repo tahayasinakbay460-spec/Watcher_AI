@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <title>Watcher AI | Yönetim Paneli</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app">
+        <header class="topbar">
+            <div class="title">KANIT YÖNETİM MERKEZİ</div>
+            <div class="panel-actions">
+                <button onclick="deleteAll()" class="btn" style="background:var(--red);">HEPSİNİ SİL</button>
+                <a href="/" class="btn">ANA PANEL</a>
+            </div>
+        </header>
+
+        <main class="grid" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; margin-top: 20px;">
+            
+            <section class="panel">
+                <div class="panel-head">
+                    <div class="panel-title">FOTOĞRAF KANITLARI</div>
+                </div>
+                <div id="captureGallery" class="grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; max-height: 600px; overflow-y: auto; padding: 10px;">
+                    </div>
+            </section>
+
+            <aside class="panel">
+                <div class="panel-head">
+                    <div class="panel-title">GEÇMİŞ LOG KAYITLARI</div>
+                    <button onclick="clearLogs()" class="btn small">LOGLARI TEMİZLE</button>
+                </div>
+                <ul id="adminHistoryList" class="history" style="max-height: 600px; overflow-y: auto; list-style: none; padding: 0; margin-top: 10px;">
+                    </ul>
+            </aside>
+        </main>
+    </div>
+
+    <script>
+        // 1. Kanıtları (Snapshot) Listeleme
+        async function loadCaptures() {
+            const res = await fetch("/admin/captures");
+            const data = await res.json();
+            const gallery = document.getElementById("captureGallery");
+            
+            if (data.captures.length === 0) {
+                gallery.innerHTML = '<p class="history-empty">Henüz kanıt yok.</p>';
+                return;
+            }
+    
+            gallery.innerHTML = data.captures.map(file => `
+                <div class="panel" style="margin-bottom:10px; border: 1px solid var(--border);">
+                    <img src="${file.url}" style="width:100%; border-radius:10px; cursor:pointer;" onclick="window.open('${file.url}')">
+                    <p style="font-size:10px; margin: 5px 0;">${file.name}</p>
+                    <button onclick="deleteSingle('${file.name}')" class="btn small" style="width:100%; background:var(--red);">SİL</button>
+                </div>
+            `).join("");
+        }
+    
+        // 2. Tekli Silme
+        async function deleteSingle(filename) {
+            await fetch('/admin/delete_capture/' + filename, { method: 'POST' });
+            loadCaptures();
+        }
+    
+        // 3. TOPLU SİLME (İstediğin o özellik)
+        async function deleteAll() {
+    if(!confirm("DİKKAT: Tüm fotoğraflar ve log kayıtları kalıcı olarak silinecek! Onaylıyor musun?")) return;
+    
+    try {
+        const res = await fetch('/admin/delete_all', { method: 'POST' });
+        if(res.ok) {
+            // Ekrandaki fotoğrafları anında yok et
+            const gallery = document.getElementById("captureGallery");
+            if(gallery) gallery.innerHTML = '<p class="history-empty">Henüz kanıt yok.</p>';
+            
+            // Ekrandaki log listesini anında boşalt
+            const historyList = document.getElementById("adminHistoryList");
+            if(historyList) historyList.innerHTML = '<li class="history-empty">Geçmiş tamamen temizlendi.</li>';
+            
+            alert("Sistem tamamen sıfırlandı!");
+        }
+    } catch (err) {
+        alert("Bağlantı hatası!");
+    }
+}
+
+        // 4. CANLI LOG KAYITLARI (EventSource)
+        const es = new EventSource("/events");
+
+        es.addEventListener("person", (ev) => {
+        const data = JSON.parse(ev.data);
+        
+        // --- 1. CANLI LOG EKLEME (SAĞ TARAF) ---
+        const historyList = document.getElementById("adminHistoryList");
+        const li = document.createElement("li");
+        li.className = "history-item danger";
+        li.style.borderBottom = "1px solid var(--border)";
+        li.style.padding = "12px";
+        li.innerHTML = `
+            <div class="row" style="display:flex; justify-content:space-between; align-items:start;">
+                <div style="flex:1;">
+                    <strong style="color:var(--red); font-size:11px; letter-spacing:1px;">İNSAN TESPİTİ</strong>
+                    <div style="font-size:12px; margin-top:5px; color:var(--text);">${data.message}</div>
+                </div>
+                <div style="text-align:right; font-size:10px; color:var(--muted);">
+                    <div>${data.ts}</div>
+                    <div style="margin-top:5px;"><span class="pill">ID: ${data.ids}</span></div>
+                </div>
+            </div>
+        `;
+        historyList.prepend(li);
+
+        // --- 2. CANLI FOTOĞRAF EKLEME (SOL TARAF) ---
+        // Backend her tespitte fotoğraf kaydettiği için galeriyi tazeleyelim
+        // Veya her olayda loadCaptures() çağırarak listeyi güncel tutalım
+        loadCaptures(); 
+    });
+
+        function clearLogs() {
+            document.getElementById("adminHistoryList").innerHTML = "";
+        }
+
+        // Yenile Butonu
+        document.getElementById("refreshAll").addEventListener("click", () => {
+            loadCaptures();
+            // Loglar zaten canlı akıyor ama istersen listeyi de sıfırlayabilirsin
+        });
+
+        loadCaptures();
+    </script>
+</body>
+</html>

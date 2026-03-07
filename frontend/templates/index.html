@@ -58,19 +58,12 @@
             İpucu: Kamera seçimi için <code>CAMERA_INDEX</code>, uyarı sıklığı için <code>WARNING_COOLDOWN_S</code> kullanabilirsin.
           </div>
         </section>
+        <div class="panel admin-panel">
+          <div class="panel-title">Admin Kanıt Yönetimi</div>
+          <a href="{{ url_for('login') }}" class="btn small" style="background-color: #dc3545; width:100%; color:white; text-align:center; display:block; padding:10px; border-radius:10px; margin-top:10px; text-decoration:none; font-size:14px; font-weight:bold; cursor:pointer; " >Yönetim Paneline Git</a>
 
-        <aside class="panel history-panel">
-          <div class="panel-head">
-            <div class="panel-title">Tespit Geçmişi</div>
-            <div class="panel-actions">
-              <button id="clearHistory" class="btn small" type="button">Temizle</button>
-            </div>
-          </div>
-
-          <ul id="historyList" class="history">
-            <li class="history-empty">Henüz kayıt yok.</li>
-          </ul>
-
+        </div>
+      
           <div class="footer-note">
             “person” tespitinde: web uyarısı + geçmiş kaydı + (token girersen) Telegram bildirimi.
           </div>

@@ -1,42 +1,62 @@
-{"timestamp": "2026-03-07T15:13:13+00:00", "event": "person", "person_count": 1, "message": "🚨 DİKKAT: 1 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:14+00:00", "event": "person", "person_count": 2, "message": "🚨 DİKKAT: 2 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:15+00:00", "event": "person", "person_count": 1, "message": "🚨 DİKKAT: 1 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:17+00:00", "event": "person", "person_count": 2, "message": "🚨 DİKKAT: 2 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:17+00:00", "event": "person", "person_count": 1, "message": "🚨 DİKKAT: 1 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:20+00:00", "event": "person", "person_count": 2, "message": "🚨 DİKKAT: 2 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:21+00:00", "event": "person", "person_count": 1, "message": "🚨 DİKKAT: 1 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:22+00:00", "event": "person", "person_count": 2, "message": "🚨 DİKKAT: 2 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:23+00:00", "event": "person", "person_count": 1, "message": "🚨 DİKKAT: 1 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:24+00:00", "event": "person", "person_count": 2, "message": "🚨 DİKKAT: 2 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:25+00:00", "event": "person", "person_count": 1, "message": "🚨 DİKKAT: 1 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:26+00:00", "event": "person", "person_count": 2, "message": "🚨 DİKKAT: 2 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:31+00:00", "event": "person", "person_count": 1, "message": "🚨 DİKKAT: 1 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:32+00:00", "event": "person", "person_count": 2, "message": "🚨 DİKKAT: 2 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:33+00:00", "event": "person", "person_count": 1, "message": "🚨 DİKKAT: 1 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:34+00:00", "event": "person", "person_count": 2, "message": "🚨 DİKKAT: 2 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:35+00:00", "event": "person", "person_count": 1, "message": "🚨 DİKKAT: 1 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:36+00:00", "event": "person", "person_count": 2, "message": "🚨 DİKKAT: 2 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:37+00:00", "event": "person", "person_count": 1, "message": "🚨 DİKKAT: 1 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:48+00:00", "event": "person", "person_count": 2, "message": "🚨 DİKKAT: 2 kişi tespit edildi!"}
-{"timestamp": "2026-03-07T15:13:49+00:00", "event": "person", "person_count": 1, "message": "🚨 DİKKAT: 1 kişi tespit edildi!"}
-{"ts": "2026-03-07T15:23:00+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
-{"ts": "2026-03-07T15:23:45+00:00", "event": "person", "ids": [1, 2], "msg": "🚨 Tespit: 2 kişi (ID: [1, 2])"}
-{"ts": "2026-03-07T15:23:47+00:00", "event": "person", "ids": [1, 2, 3], "msg": "🚨 Tespit: 3 kişi (ID: [1, 2, 3])"}
-{"ts": "2026-03-07T15:23:48+00:00", "event": "person", "ids": [1, 2], "msg": "🚨 Tespit: 2 kişi (ID: [1, 2])"}
-{"ts": "2026-03-07T15:23:50+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
-{"ts": "2026-03-07T15:23:51+00:00", "event": "person", "ids": [1, 2], "msg": "🚨 Tespit: 2 kişi (ID: [1, 2])"}
-{"ts": "2026-03-07T15:23:54+00:00", "event": "person", "ids": [1, 2, 5], "msg": "🚨 Tespit: 3 kişi (ID: [1, 2, 5])"}
-{"ts": "2026-03-07T15:23:55+00:00", "event": "person", "ids": [1, 2], "msg": "🚨 Tespit: 2 kişi (ID: [1, 2])"}
-{"ts": "2026-03-07T15:23:56+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
-{"ts": "2026-03-07T15:23:57+00:00", "event": "person", "ids": [1, 2], "msg": "🚨 Tespit: 2 kişi (ID: [1, 2])"}
-{"ts": "2026-03-07T15:23:59+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
-{"ts": "2026-03-07T15:24:00+00:00", "event": "person", "ids": [1, 7], "msg": "🚨 Tespit: 2 kişi (ID: [1, 7])"}
-{"ts": "2026-03-07T15:24:01+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
-{"ts": "2026-03-07T15:24:13+00:00", "event": "clear", "ids": [], "msg": "✅ Temiz"}
-{"ts": "2026-03-07T15:24:14+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
-{"ts": "2026-03-07T15:24:15+00:00", "event": "clear", "ids": [], "msg": "✅ Temiz"}
-{"ts": "2026-03-07T15:24:16+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
-{"ts": "2026-03-07T15:24:17+00:00", "event": "clear", "ids": [], "msg": "✅ Temiz"}
-{"ts": "2026-03-07T15:24:18+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
-{"ts": "2026-03-07T15:24:19+00:00", "event": "clear", "ids": [], "msg": "✅ Temiz"}
-{"ts": "2026-03-07T15:24:20+00:00", "event": "person", "ids": [10], "msg": "🚨 Tespit: 1 kişi (ID: [10])"}
+{"ts": "2026-03-07T17:59:43+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T17:59:44+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:01:18+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T18:01:19+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:01:40+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T18:01:42+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:01:43+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T18:01:44+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:01:49+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T18:01:50+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:01:51+00:00", "event": "person", "ids": [3, 1], "msg": "🚨 Tespit: 2 kişi (ID: [3, 1])"}
+{"ts": "2026-03-07T18:01:52+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:04:16+00:00", "event": "person", "ids": [1, 5], "msg": "🚨 Tespit: 2 kişi (ID: [1, 5])"}
+{"ts": "2026-03-07T18:04:17+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:04:22+00:00", "event": "person", "ids": [1, 6], "msg": "🚨 Tespit: 2 kişi (ID: [1, 6])"}
+{"ts": "2026-03-07T18:04:23+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:04:24+00:00", "event": "person", "ids": [1, 6], "msg": "🚨 Tespit: 2 kişi (ID: [1, 6])"}
+{"ts": "2026-03-07T18:04:25+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:04:26+00:00", "event": "person", "ids": [1, 6], "msg": "🚨 Tespit: 2 kişi (ID: [1, 6])"}
+{"ts": "2026-03-07T18:04:27+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:04:51+00:00", "event": "person", "ids": [1, 8], "msg": "🚨 Tespit: 2 kişi (ID: [1, 8])"}
+{"ts": "2026-03-07T18:04:52+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:04:53+00:00", "event": "person", "ids": [1, 8], "msg": "🚨 Tespit: 2 kişi (ID: [1, 8])"}
+{"ts": "2026-03-07T18:04:54+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:04:55+00:00", "event": "person", "ids": [1, 9], "msg": "🚨 Tespit: 2 kişi (ID: [1, 9])"}
+{"ts": "2026-03-07T18:04:56+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:04:58+00:00", "event": "person", "ids": [1, 10], "msg": "🚨 Tespit: 2 kişi (ID: [1, 10])"}
+{"ts": "2026-03-07T18:04:59+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:05:24+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T18:05:25+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:05:27+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T18:05:28+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:05:29+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T18:05:30+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:05:37+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T18:05:38+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:05:40+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T18:05:41+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:05:42+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T18:05:43+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:05:45+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T18:05:46+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:06:01+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T18:06:03+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:06:04+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T18:06:05+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:06:06+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T18:06:07+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:06:12+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T18:06:13+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:06:17+00:00", "event": "person", "ids": [1, 18], "msg": "🚨 Tespit: 2 kişi (ID: [1, 18])"}
+{"ts": "2026-03-07T18:06:18+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:06:19+00:00", "event": "person", "ids": [1, 19], "msg": "🚨 Tespit: 2 kişi (ID: [1, 19])"}
+{"ts": "2026-03-07T18:06:20+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:06:28+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T18:06:29+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:06:35+00:00", "event": "clear", "ids": [], "msg": "✅ Alan Temiz"}
+{"ts": "2026-03-07T18:06:36+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:06:59+00:00", "event": "person", "ids": [1, 22], "msg": "🚨 Tespit: 2 kişi (ID: [1, 22])"}
+{"ts": "2026-03-07T18:07:00+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
+{"ts": "2026-03-07T18:07:01+00:00", "event": "person", "ids": [1, 23], "msg": "🚨 Tespit: 2 kişi (ID: [1, 23])"}
+{"ts": "2026-03-07T18:07:02+00:00", "event": "person", "ids": [1], "msg": "🚨 Tespit: 1 kişi (ID: [1])"}
