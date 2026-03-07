@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Watcher AI | Security Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <script defer src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </head>
+  <body data-events-url="{{ url_for('events') }}" data-video-url="{{ url_for('video_feed') }}">
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="pulse"></div>
+          <div>
+            <div class="title">Watcher AI</div>
+            <div class="subtitle">Cyber Security Live Detection Dashboard</div>
+          </div>
+        </div>
+
+        <div class="statusbar">
+          <div class="badge">
+            <span class="k">STREAM</span>
+            <span id="streamStatus" class="v ok">AKTİF</span>
+          </div>
+          <div class="badge">
+            <span class="k">EVENTS</span>
+            <span id="sseStatus" class="v warn">BAĞLANIYOR</span>
+          </div>
+          <div class="badge">
+            <span class="k">SON TESPİT</span>
+            <span id="lastDetect" class="v">-</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="grid">
+        <section class="panel video-panel">
+          <div class="panel-head">
+            <div class="panel-title">Canlı Kamera</div>
+            <div class="panel-meta">Route: <code>/video_feed</code></div>
+          </div>
+
+          <div id="alertBox" class="alert hidden" role="status" aria-live="polite">
+            <div class="alert-left">
+              <div class="alert-title">UYARI</div>
+              <div id="alertText" class="alert-text">İnsan tespit edildi!</div>
+            </div>
+            <button id="dismissAlert" class="btn small" type="button">Kapat</button>
+          </div>
+
+          <div class="video-frame">
+            <img id="video" class="video" src="{{ url_for('video_feed') }}" alt="Canlı video akışı" />
+          </div>
+
+          <div class="hint">
+            İpucu: Kamera seçimi için <code>CAMERA_INDEX</code>, uyarı sıklığı için <code>WARNING_COOLDOWN_S</code> kullanabilirsin.
+          </div>
+        </section>
+
+        <aside class="panel history-panel">
+          <div class="panel-head">
+            <div class="panel-title">Tespit Geçmişi</div>
+            <div class="panel-actions">
+              <button id="clearHistory" class="btn small" type="button">Temizle</button>
+            </div>
+          </div>
+
+          <ul id="historyList" class="history">
+            <li class="history-empty">Henüz kayıt yok.</li>
+          </ul>
+
+          <div class="footer-note">
+            “person” tespitinde: web uyarısı + geçmiş kaydı + (token girersen) Telegram bildirimi.
+          </div>
+        </aside>
+      </main>
+    </div>
+  </body>
+</html>
+
