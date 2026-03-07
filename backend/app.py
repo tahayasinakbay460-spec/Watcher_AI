@@ -27,7 +27,7 @@ app = Flask(
 )
 
 YOLO_MODEL_PATH = os.getenv("YOLO_MODEL", "yolov8n.pt")
-YOLO_CONF = float(os.getenv("YOLO_CONF", "0.25"))
+YOLO_CONF = float(os.getenv("YOLO_CONF", "0.50"))
 CAMERA_INDEX = int(os.getenv("CAMERA_INDEX", "0"))
 WARNING_COOLDOWN_S = float(os.getenv("WARNING_COOLDOWN_S", "1.0"))
 
@@ -66,7 +66,18 @@ def _get_camera() -> cv2.VideoCapture:
         _cap = _open_camera()
     return _cap
 
+camera_active = True  # Kameranın varsayılan durumu
 
+@app.route('/toggle_camera', methods=['POST'])
+def toggle_camera():
+    global camera_active
+    camera_active = not camera_active
+    
+    # İstersen butona basıldığında Telegram'a da haber versin:
+    durum = "Açıldı 🟢" if camera_active else "Kapatıldı 🔴"
+    send_telegram_notification(f"Sistem Komutu: Kamera Uzaktan {durum}")
+    
+    return {"status": camera_active}
 @atexit.register
 def _cleanup_camera() -> None:
     global _cap
@@ -200,62 +211,65 @@ def gen_frames():
     global _last_person_warning_ts, _last_person_count
 
     while True:
+        if not camera_active:
+            time.sleep(1.0)
+            continue
+            
         cap = _get_camera()
         if cap is None or not cap.isOpened():
-            jpeg = _error_jpeg("Kamera acilamadi. CAMERA_INDEX kontrol edin.")
-            part = (
-                b"--frame\r\n"
-                b"Content-Type: image/jpeg\r\n"
-                b"Content-Length: " + str(len(jpeg)).encode("ascii") + b"\r\n\r\n" + jpeg + b"\r\n"
-            )
-            yield part
+            jpeg = _error_jpeg("Kamera acilamadi.")
+            yield (b"--frame\r\nContent-Type: image/jpeg\r\n\r\n" + jpeg + b"\r\n")
             time.sleep(1.0)
             continue
 
         with _infer_lock:
+            # 1. ÖNCE GÖRÜNTÜYÜ OKUMALIYIZ (Hata buradaydı!)
             ok, frame = cap.read()
             if not ok:
                 time.sleep(0.02)
                 continue
 
-            results = model.predict(source=frame, conf=YOLO_CONF, verbose=False)
+            # 2. SONRA TRACK İŞLEMİNİ YAPMALIYIZ
+            results = model.track(source=frame, conf=YOLO_CONF, persist=True, verbose=False)
             result0 = results[0] if results else None
-
-            if result0 is not None:
-                frame, person_detected, person_count = _annotate(frame, result0)
+            
+            if result0 is not None and result0.boxes.id is not None:
+                track_ids = result0.boxes.id.int().tolist()
+                person_count = len(track_ids)
+                # _annotate fonksiyonuna frame'i ve sonucu gönderiyoruz
+                frame, person_detected, _ = _annotate(frame, result0)
             else:
                 person_detected = False
                 person_count = 0
-        # Sayı değiştiyse hem Telegram'a hem de Web Arayüzüne (Event) haber ver
+                track_ids = []
+
+        # 3. SAYI DEĞİŞİMİ VE JSON KAYDI (Döngü içinde ama Lock dışında)
         if person_count != _last_person_count:
-            if person_count > 0:
-                msg = f"🚨 DİKKAT: {person_count} kişi tespit edildi!"
-                # Web arayüzündeki 'Tespit Geçmişi' için event yayınla
-                _publish_event("person", {"message": msg, "count": person_count})
-            else:
-                msg = "✅ Alan Temiz: Kimse kalmadı."
-                _publish_event("clear", {"message": msg, "count": 0})
+            event_type = "person" if person_count > 0 else "clear"
+            msg = f"🚨 Tespit: {person_count} kişi (ID: {track_ids})" if person_count > 0 else "✅ Temiz"
             
-            # Telegram bildirimini gönder
+            log_data = {
+                "ts": _now_iso(),
+                "event": event_type,
+                "ids": track_ids,
+                "msg": msg
+            }
+            
+            try:
+                with open("detections.json", "a", encoding="utf-8") as f:
+                    f.write(json.dumps(log_data, ensure_ascii=False) + "\n")
+            except Exception as e:
+                print(f"Dosya yazma hatası: {e}")
+
             send_telegram_notification(msg)
+            _publish_event(event_type, {"message": msg, "count": person_count})
             _last_person_count = person_count
 
-        
-
+        # 4. GÖRÜNTÜYÜ BASIYORUZ
         ok, buf = cv2.imencode(".jpg", frame)
-        if not ok:
-            continue
-
-        frame_bytes = buf.tobytes()
-        part = (
-            b"--frame\r\n"
-            b"Content-Type: image/jpeg\r\n"
-            b"Content-Length: " + str(len(frame_bytes)).encode("ascii") + b"\r\n\r\n"
-            + frame_bytes
-            + b"\r\n"
-        )
-        yield part
-
+        if ok:
+            frame_bytes = buf.tobytes()
+            yield (b"--frame\r\nContent-Type: image/jpeg\r\n\r\n" + frame_bytes + b"\r\n")
 
 @app.route("/")
 def index():

@@ -127,5 +127,33 @@
     showAlert(data.message);
     addHistory(data);
   });
-})();
+// --- KAMERA AÇ/KAPAT BUTONU MANTIĞI ---
+const toggleCameraBtn = $("toggleCameraBtn");
+let isCameraOn = true;
+
+if (toggleCameraBtn) {
+  toggleCameraBtn.addEventListener("click", async () => {
+    try {
+      // Backend'e kamerayı aç/kapat sinyali gönder
+      const res = await fetch("/toggle_camera", { method: "POST" });
+      const data = await res.json();
+      isCameraOn = data.status;
+
+      // Gelen cevaba göre butonu ve videoyu güncelle
+      if (isCameraOn) {
+        toggleCameraBtn.textContent = "Turn Off";
+        toggleCameraBtn.style.backgroundColor = "#dc3545"; // Kırmızı (kapatmak için)
+        els.video.src = videoUrl; // Görüntü akışını geri başlat
+        setStatus(els.streamStatus, "AKTİF", "ok");
+      } else {
+        toggleCameraBtn.textContent = "Turn On";
+        toggleCameraBtn.style.backgroundColor = "#28a745"; // Yeşil (açmak için)
+        els.video.src = ""; // Görüntü akışını durdur
+        setStatus(els.streamStatus, "KAPALI", "warn");
+      }
+    } catch (err) {
+      console.error("Kamera tetiklenemedi:", err);
+    }
+  });
+}})();
 
