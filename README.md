@@ -1,7 +1,7 @@
 🛡️ Watcher AI: Smart Security System
 
-<p style= "text-align :center;">
-  <img src = "Screenshot 2026-03-12 202808.png" alt= "image">
+<p align="center">
+  <img src="Screenshot 2026-03-12 202808.png" width="45%" alt="AI Person Detection" />
 </p>
 Watcher AI is a security project that uses YOLOv8 to detect people in real-time. It captures photos of intruders, sends notifications to Telegram, and provides a secure admin panel for evidence management.
 
